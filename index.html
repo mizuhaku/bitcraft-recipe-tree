@@ -5,8 +5,10 @@
   <title>Recipe Tree Viewer</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       padding: 2rem;
+      background: #f9f9f9;
+      color: #222;
     }
     select {
       font-size: 1rem;
@@ -14,47 +16,48 @@
       width: max-content;
       min-width: 12rem;
       max-width: 100%;
+      padding: 0.25rem 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
     input[type=number] {
       font-size: 1rem;
       margin-left: 0.5rem;
       width: 4rem;
+      padding: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
     .tree, .summary {
       margin-top: 2rem;
     }
-
-    /* Simplified cross-browser tree lines */
     .tree ul {
       list-style: none;
-      padding-left: 1rem;
-      position: relative;
+      padding-left: 1.25rem;
+      border-left: 2px solid #ddd;
+      margin-left: 0.5rem;
     }
-
-    .tree ul::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 5px;
-      width: 1px;
-      height: 100%;
-      background: #555;
-    }
-
     .tree li {
-      margin: 0.25rem 0;
-      padding-left: 1rem;
+      margin: 0.35rem 0;
       position: relative;
+      padding-left: 0.75rem;
     }
-
     .tree li::before {
-      content: "";
+      content: "•";
       position: absolute;
-      top: 0.9em;
       left: 0;
-      width: 10px;
-      height: 1px;
-      background: #555;
+      color: #888;
+      font-weight: bold;
+      font-size: 1.2rem;
+      line-height: 1;
+      top: 0.15rem;
+    }
+    h1, h2 {
+      font-weight: 600;
+      color: #333;
+    }
+    ul#materialSummary {
+      padding-left: 1.25rem;
     }
   </style>
 </head>
@@ -144,7 +147,6 @@
     const treeView = document.getElementById('treeView');
     const materialSummary = document.getElementById('materialSummary');
 
-    // Populate dropdown with capitalized recipe names
     Object.keys(recipes).forEach(recipe => {
       const option = document.createElement('option');
       option.value = recipe;
@@ -178,7 +180,6 @@
       renderMaterialSummary(materialTotals);
     }
 
-    // Recursive function to build nested tree and tally base materials
     function buildTree(name, qty, totals) {
       const li = document.createElement('li');
       li.textContent = `${toTitleCase(name)} × ${qty}`;
