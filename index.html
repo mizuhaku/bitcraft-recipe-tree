@@ -189,13 +189,10 @@
         li.appendChild(toggle);
       }
     
-      // Round display qty for tree trunk and plant root
-      const displayQty = (name === 'tree trunk' || name === 'plant root') ? Math.ceil(qty) : qty;
-    
-      li.appendChild(document.createTextNode(` ${toTitleCase(name)} × ${displayQty}`));
+      // Display quantity as-is (no special rounding)
+      li.appendChild(document.createTextNode(` ${toTitleCase(name)} × ${qty}`));
     
       if (!hasChildren) {
-        // Base material: accumulate exactly qty passed in here (already adjusted)
         totals[name] = (totals[name] || 0) + qty;
         return li;
       }
@@ -203,19 +200,7 @@
       const subUl = document.createElement('ul');
     
       for (const [subName, subQty] of Object.entries(recipe.components)) {
-        let neededQty = qty * subQty;
-    
-        // Apply rounding for items that produce multiple units:
-        // bark: 4 per tree trunk
-        if (subName === 'tree trunk' && name === 'bark') {
-          neededQty = Math.ceil(neededQty / 4);
-        }
-    
-        // fiber: 100 per plant root
-        if (subName === 'plant root' && name === 'fiber') {
-          neededQty = Math.ceil(neededQty / 100);
-        }
-    
+        const neededQty = qty * subQty;
         const child = buildTree(subName, neededQty, totals);
         subUl.appendChild(child);
       }
