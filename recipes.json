@@ -1,0 +1,74 @@
+{
+  "cloth research": {
+    "components": {
+      "refined cloth": 1,
+      "study journal": 1
+    }
+  },
+  "refined cloth": {
+    "components": {
+      "textile": 1,
+      "cloth": 5
+    }
+  },
+  "textile": {
+    "components": {
+      "animal hair": 1,
+      "straw": 1
+    }
+  },
+  "study journal": {
+    "components": {
+      "parchment": 2,
+      "ink": 2,
+      "hieroglyph": 1
+    }
+  },
+  "parchment": {
+    "components": {
+      "bark": 2
+    }
+  },
+  "bark": {
+    "components": {
+      "tree trunk": 0.25
+    }
+  },
+  "ink": {
+    "components": {
+      "pigment": 1,
+      "fish oil": 2
+    }
+  },
+  "pigment": {
+    "components": {
+      "flowers": 5
+    }
+  },
+  "fish oil": {
+    "components": {
+      "fish": 1
+    }
+  },
+  "cloth": {
+    "components": {
+      "cloth strip": 1,
+      "wispweave filaments": 5
+    }
+  },
+  "cloth strip": {
+    "components": {
+      "thread": 1
+    }
+  },
+  "thread": {
+    "components": {
+      "fiber": 40
+    }
+  },
+  "fiber": {
+    "components": {
+      "plant root": 0.01
+    }
+  }
+}
