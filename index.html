@@ -229,7 +229,7 @@
       materialSummary.innerHTML = '';
       for (const [material, qty] of Object.entries(totals)) {
         const li = document.createElement('li');
-        li.textContent = `${toTitleCase(material)}: ${Math.round(qty)}`;
+        li.textContent = `${toTitleCase(material)}: ${Math.ceil(qty)}`;
         materialSummary.appendChild(li);
       }
     }
