@@ -2,31 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Recipe Tree Viewer</title>
+  <title>Recipe Tree Viewer with Dark Mode</title>
   <style>
+    /* Light mode (default) */
     body {
       font-family: Arial, sans-serif;
       padding: 2rem;
       background: #f9f9f9;
       color: #222;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
-    select {
+    select, input[type=number] {
       font-size: 1rem;
       margin-left: 0.5rem;
-      width: max-content;
-      min-width: 12rem;
-      max-width: 100%;
       padding: 0.25rem 0.4rem;
       border: 1px solid #ccc;
       border-radius: 4px;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    select {
+      width: max-content;
+      min-width: 12rem;
+      max-width: 100%;
     }
     input[type=number] {
-      font-size: 1rem;
-      margin-left: 0.5rem;
       width: 4rem;
-      padding: 0.25rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+    }
+    label {
+      font-weight: 600;
     }
     .tree, .summary {
       margin-top: 2rem;
@@ -36,13 +39,33 @@
       padding-left: 1.25rem;
       border-left: 2px solid #ddd;
       margin-left: 0.5rem;
+      transition: border-color 0.3s ease;
     }
     .tree li {
       margin: 0.35rem 0;
       position: relative;
-      padding-left: 0.75rem;
+      padding-left: 1.5rem;
+      cursor: default;
+      user-select: none;
     }
-    .tree li::before {
+    /* Toggle bullet */
+    .tree li.has-children > .toggle {
+      position: absolute;
+      left: 0;
+      top: 0.15rem;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #555;
+      cursor: pointer;
+      user-select: none;
+      width: 1rem;
+      display: inline-block;
+      text-align: center;
+      line-height: 1;
+      transition: color 0.3s ease;
+    }
+    /* Normal bullet for leaf */
+    .tree li:not(.has-children)::before {
       content: "•";
       position: absolute;
       left: 0;
@@ -51,18 +74,70 @@
       font-size: 1.2rem;
       line-height: 1;
       top: 0.15rem;
+      transition: color 0.3s ease;
+    }
+    /* Hide children when collapsed */
+    .tree ul.collapsed {
+      display: none;
     }
     h1, h2 {
       font-weight: 600;
       color: #333;
+      transition: color 0.3s ease;
     }
     ul#materialSummary {
       padding-left: 1.25rem;
     }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background: #121212;
+      color: #ddd;
+    }
+    body.dark-mode h1, body.dark-mode h2 {
+      color: #eee;
+    }
+    body.dark-mode select, body.dark-mode input[type=number] {
+      background: #222;
+      color: #ddd;
+      border-color: #555;
+    }
+    body.dark-mode .tree ul {
+      border-left-color: #555;
+    }
+    body.dark-mode .tree li.has-children > .toggle {
+      color: #bbb;
+    }
+    body.dark-mode .tree li:not(.has-children)::before {
+      color: #bbb;
+    }
+
+    /* Dark mode toggle button */
+    #darkModeToggle {
+      margin-left: 1rem;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #666;
+      background: #eee;
+      color: #222;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      user-select: none;
+    }
+    body.dark-mode #darkModeToggle {
+      background: #333;
+      color: #ddd;
+      border-color: #999;
+    }
   </style>
 </head>
 <body>
-  <h1>Recipe Material Viewer</h1>
+  <h1>
+    Recipe Material Viewer
+    <button id="darkModeToggle" aria-pressed="false" aria-label="Toggle dark mode">Dark Mode</button>
+  </h1>
+
   <div>
     <label for="recipeSelect">Select Recipe:</label>
     <select id="recipeSelect"></select>
@@ -146,6 +221,8 @@
     const recipeQty = document.getElementById('recipeQty');
     const treeView = document.getElementById('treeView');
     const materialSummary = document.getElementById('materialSummary');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
 
     Object.keys(recipes).forEach(recipe => {
       const option = document.createElement('option');
@@ -157,6 +234,13 @@
     recipeSelect.addEventListener('change', render);
     recipeQty.addEventListener('input', onQtyChange);
     recipeQty.addEventListener('change', onQtyChange);
+
+    darkModeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      const isDark = body.classList.contains('dark-mode');
+      darkModeToggle.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+      darkModeToggle.setAttribute('aria-pressed', isDark);
+    });
 
     function onQtyChange() {
       if (recipeQty.value === '' || recipeQty.value < 1) {
@@ -178,19 +262,41 @@
       treeView.appendChild(ul);
 
       renderMaterialSummary(materialTotals);
+
+      // Add toggle listeners after render
+      document.querySelectorAll('.tree li.has-children > .toggle').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+          const ul = toggle.parentElement.querySelector('ul');
+          if (!ul) return;
+          ul.classList.toggle('collapsed');
+          toggle.textContent = ul.classList.contains('collapsed') ? '►' : '▼';
+        });
+      });
     }
 
     function buildTree(name, qty, totals) {
       const li = document.createElement('li');
-      li.textContent = `${toTitleCase(name)} × ${qty}`;
+      const recipe = recipes[name];
+      const hasChildren = recipe && recipe.components && Object.keys(recipe.components).length > 0;
 
-      if (!recipes[name]) {
+      if (hasChildren) {
+        li.classList.add('has-children');
+        const toggle = document.createElement('span');
+        toggle.className = 'toggle';
+        toggle.textContent = '▼'; // Expanded by default
+        li.appendChild(toggle);
+      }
+
+      const textNode = document.createTextNode(` ${toTitleCase(name)} × ${qty}`);
+      li.appendChild(textNode);
+
+      if (!hasChildren) {
         totals[name] = (totals[name] || 0) + qty;
         return li;
       }
 
       const subUl = document.createElement('ul');
-      for (const [subName, subQty] of Object.entries(recipes[name].components)) {
+      for (const [subName, subQty] of Object.entries(recipe.components)) {
         const child = buildTree(subName, qty * subQty, totals);
         subUl.appendChild(child);
       }
