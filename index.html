@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recipe Tree Viewer</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    select { font-size: 1rem; }
+    ul { margin-left: 1.5rem; }
+    .tree, .summary { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>Recipe Material Viewer</h1>
+  <label for="recipeSelect">Select Recipe:</label>
+  <select id="recipeSelect"></select>
+
+  <div class="tree">
+    <h2>Recipe Breakdown</h2>
+    <div id="treeView"></div>
+  </div>
+
+  <div class="summary">
+    <h2>Total Base Materials</h2>
+    <ul id="materialSummary"></ul>
+  </div>
+
+  <script>
+    const recipes = {
+      "cloth research": {
+        components: {
+          "refined cloth": 5,
+          "study journal": 1
+        }
+      },
+      "refined cloth": {
+        components: {
+          "textile": 1,
+          "cloth": 5
+        }
+      },
+      "textile": {
+        components: {
+          "animal hair": 1,
+          "straw": 1
+        }
+      },
+      "study journal": {
+        components: {
+          "parchment": 2,
+          "ink": 2,
+          "hieroglyph": 1
+        }
+      },
+      "parchment": {
+        components: {
+          "bark": 2
+        }
+      },
+      "bark": {
+        components: {
+          "tree trunk": 0.25
+        }
+      },
+      "ink": {
+        components: {
+          "pigment": 1,
+          "fish oil": 2
+        }
+      },
+      "pigment": {
+        components: {
+          "flowers": 5
+        }
+      },
+      "fish oil": {
+        components: {
+          "fish": 1
+        }
+      }
+    };
+
+    const recipeSelect = document.getElementById('recipeSelect');
+    const treeView = document.getElementById('treeView');
+    const materialSummary = document.getElementById('materialSummary');
+
+    // Populate recipe dropdown
+    Object.keys(recipes).forEach(recipe => {
+      const option = document.createElement('option');
+      option.value = recipe;
+      option.textContent = recipe;
+      recipeSelect.appendChild(option);
+    });
+
+    recipeSelect.addEventListener('change', () => {
+      const root = recipeSelect.value;
+      renderTree(root);
+    });
+
+    function renderTree(root) {
+      treeView.innerHTML = '';
+      materialSummary.innerHTML = '';
+      const materialTotals = {};
+      const treeElement = buildTree(root, 1, materialTotals);
+      treeView.appendChild(treeElement);
+      renderMaterialSummary(materialTotals);
+    }
+
+    function buildTree(name, qty, totals) {
+      const li = document.createElement('li');
+      const node = document.createElement('ul');
+      li.textContent = `${name} × ${qty}`;
+
+      if (!recipes[name]) {
+        totals[name] = (totals[name] || 0) + qty;
+        return li;
+      }
+
+      node.appendChild(li);
+
+      const { components } = recipes[name];
+      for (const [sub, count] of Object.entries(components)) {
+        const subTree = buildTree(sub, qty * count, totals);
+        node.appendChild(subTree);
+      }
+
+      return node;
+    }
+
+    function renderMaterialSummary(totals) {
+      for (const [material, qty] of Object.entries(totals)) {
+        const li = document.createElement('li');
+        li.textContent = `${material}: ${qty}`;
+        materialSummary.appendChild(li);
+      }
+    }
+
+    // Auto-load first recipe
+    recipeSelect.selectedIndex = 0;
+    recipeSelect.dispatchEvent(new Event('change'));
+  </script>
+</body>
+</html>
