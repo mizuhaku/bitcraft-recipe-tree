@@ -5,15 +5,19 @@
   <title>Recipe Tree Viewer</title>
   <style>
     body { font-family: sans-serif; padding: 2rem; }
-    select { font-size: 1rem; }
+    select, input[type=number] { font-size: 1rem; margin-left: 0.5rem; }
     ul { margin-left: 1.5rem; }
     .tree, .summary { margin-top: 2rem; }
   </style>
 </head>
 <body>
   <h1>Recipe Material Viewer</h1>
-  <label for="recipeSelect">Select Recipe:</label>
-  <select id="recipeSelect"></select>
+  <div>
+    <label for="recipeSelect">Select Recipe:</label>
+    <select id="recipeSelect"></select>
+    <label for="recipeQty">Quantity:</label>
+    <input type="number" id="recipeQty" value="1" min="1" />
+  </div>
 
   <div class="tree">
     <h2>Recipe Breakdown</h2>
@@ -81,6 +85,7 @@
     };
 
     const recipeSelect = document.getElementById('recipeSelect');
+    const recipeQty = document.getElementById('recipeQty');
     const treeView = document.getElementById('treeView');
     const materialSummary = document.getElementById('materialSummary');
 
@@ -92,16 +97,16 @@
       recipeSelect.appendChild(option);
     });
 
-    recipeSelect.addEventListener('change', () => {
-      const root = recipeSelect.value;
-      renderTree(root);
-    });
+    recipeSelect.addEventListener('change', render);
+    recipeQty.addEventListener('input', render);
 
-    function renderTree(root) {
+    function render() {
+      const root = recipeSelect.value;
+      const qty = parseFloat(recipeQty.value) || 1;
       treeView.innerHTML = '';
       materialSummary.innerHTML = '';
       const materialTotals = {};
-      const treeElement = buildTree(root, 1, materialTotals);
+      const treeElement = buildTree(root, qty, materialTotals);
       treeView.appendChild(treeElement);
       renderMaterialSummary(materialTotals);
     }
@@ -110,20 +115,17 @@
       const li = document.createElement('li');
       const node = document.createElement('ul');
       li.textContent = `${name} × ${qty}`;
-
       if (!recipes[name]) {
         totals[name] = (totals[name] || 0) + qty;
         return li;
       }
 
       node.appendChild(li);
-
       const { components } = recipes[name];
       for (const [sub, count] of Object.entries(components)) {
         const subTree = buildTree(sub, qty * count, totals);
         node.appendChild(subTree);
       }
-
       return node;
     }
 
@@ -137,7 +139,7 @@
 
     // Auto-load first recipe
     recipeSelect.selectedIndex = 0;
-    recipeSelect.dispatchEvent(new Event('change'));
+    render();
   </script>
 </body>
 </html>
