@@ -148,7 +148,8 @@
     
       // Show all recipes if category is "All"
       const filteredRecipes = Object.entries(recipes).filter(([name, recipe]) => {
-        return category === 'All' || recipe.category === category;
+        const hasInputs = recipe.components && Object.keys(recipe.components).length > 0;
+        return (category === 'All' || recipe.category === category) && hasInputs;
       });
     
       filteredRecipes.sort(([aName], [bName]) => aName.localeCompare(bName));
