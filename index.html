@@ -158,10 +158,6 @@
         const option = document.createElement('option');
         option.value = name;
         option.textContent = toTitleCase(name);
-        // Disable option if no input components
-        if (!recipe.components || Object.keys(recipe.components).length === 0) {
-          option.disabled = true;
-        }
         recipeSelect.appendChild(option);
       });
     
