@@ -189,7 +189,7 @@
         li.appendChild(toggle);
       }
     
-      // Round display quantities of tree trunk and plant root to whole numbers:
+      // Round display quantities for tree trunk and plant root:
       let displayQty = qty;
       if (name === 'tree trunk' || name === 'plant root') {
         displayQty = Math.ceil(qty);
@@ -207,12 +207,12 @@
       for (const [subName, subQty] of Object.entries(recipe.components)) {
         let neededQty = qty * subQty;
     
-        // Adjust for bark -> tree trunk:
+        // Round tree trunks needed for bark to nearest integer (up)
         if (name === 'bark' && subName === 'tree trunk') {
           neededQty = Math.ceil(neededQty / 4);
         }
     
-        // Adjust for fiber -> plant root:
+        // Round plant roots needed for fiber to nearest integer (up)
         if (name === 'fiber' && subName === 'plant root') {
           neededQty = Math.ceil(neededQty / 100);
         }
