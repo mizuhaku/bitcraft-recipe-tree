@@ -5,7 +5,7 @@
   <title>Recipe Tree Viewer</title>
   <style>
     body { font-family: sans-serif; padding: 2rem; }
-    select, input[type=number] { font-size: 1rem; margin-left: 0.5rem; width: 4rem; }
+    select, input[type=number] { font-size: 1rem; margin-left: 0.5rem; width: 6rem; }
     ul { margin-left: 1.5rem; }
     .tree, .summary { margin-top: 2rem; }
   </style>
@@ -30,10 +30,17 @@
   </div>
 
   <script>
+    // Helper function: converts strings like "refined cloth" to "Refined Cloth"
+    function toTitleCase(str) {
+      return str.replace(/\w\S*/g, (txt) =>
+        txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+      );
+    }
+
     const recipes = {
       "cloth research": {
         components: {
-          "refined cloth": 5,
+          "refined cloth": 1,
           "study journal": 1
         }
       },
@@ -89,15 +96,14 @@
     const treeView = document.getElementById('treeView');
     const materialSummary = document.getElementById('materialSummary');
 
-    // Populate dropdown
+    // Populate dropdown with capitalized names
     Object.keys(recipes).forEach(recipe => {
       const option = document.createElement('option');
       option.value = recipe;
-      option.textContent = recipe;
+      option.textContent = toTitleCase(recipe);
       recipeSelect.appendChild(option);
     });
 
-    // Render on recipe change or quantity change (input + change)
     recipeSelect.addEventListener('change', render);
     recipeQty.addEventListener('input', onQtyChange);
     recipeQty.addEventListener('change', onQtyChange);
@@ -115,32 +121,40 @@
       treeView.innerHTML = '';
       materialSummary.innerHTML = '';
       const materialTotals = {};
-      const treeElement = buildTree(root, qty, materialTotals);
-      treeView.appendChild(treeElement);
+
+      const rootTree = buildTree(root, qty, materialTotals);
+      const ul = document.createElement('ul');
+      ul.appendChild(rootTree);
+      treeView.appendChild(ul);
+
       renderMaterialSummary(materialTotals);
     }
 
+    // Recursive tree builder: returns <li> with nested <ul> for components
     function buildTree(name, qty, totals) {
       const li = document.createElement('li');
-      const node = document.createElement('ul');
-      li.textContent = `${name} × ${qty}`;
+      li.textContent = `${toTitleCase(name)} × ${qty}`;
+
       if (!recipes[name]) {
+        // Base material, count it
         totals[name] = (totals[name] || 0) + qty;
         return li;
       }
-      node.appendChild(li);
-      const { components } = recipes[name];
-      for (const [sub, count] of Object.entries(components)) {
-        const subTree = buildTree(sub, qty * count, totals);
-        node.appendChild(subTree);
+
+      const subUl = document.createElement('ul');
+      for (const [subName, subQty] of Object.entries(recipes[name].components)) {
+        const child = buildTree(subName, qty * subQty, totals);
+        subUl.appendChild(child);
       }
-      return node;
+      li.appendChild(subUl);
+      return li;
     }
 
     function renderMaterialSummary(totals) {
+      materialSummary.innerHTML = '';
       for (const [material, qty] of Object.entries(totals)) {
         const li = document.createElement('li');
-        li.textContent = `${material}: ${qty}`;
+        li.textContent = `${toTitleCase(material)}: ${qty}`;
         materialSummary.appendChild(li);
       }
     }
