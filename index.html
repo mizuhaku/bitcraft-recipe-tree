@@ -108,14 +108,6 @@
   </select>
 </div>
   
-<div>
-  <label for="recipeSelect">Select Recipe:</label>
-  <select id="recipeSelect" disabled></select>
-  <label for="recipeQty">Quantity:</label>
-  <input type="number" id="recipeQty" value="1" min="1" step="1" disabled />
-</div>
-
-  
   <div>
     <label for="recipeSelect">Select Recipe:</label>
     <select id="recipeSelect" disabled></select>
@@ -149,10 +141,11 @@
     const materialSummary = document.getElementById('materialSummary');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
+    const categorySelect = document.getElementById('categorySelect');
 
     function populateRecipeSelect(category = categorySelect.value) {
-  recipeSelect.innerHTML = '';
-
+      recipeSelect.innerHTML = '';
+    
       // Show all recipes if category is "All"
       const filteredRecipes = Object.entries(recipes).filter(([name, recipe]) => {
         return category === 'All' || recipe.category === category;
@@ -170,7 +163,7 @@
       recipeSelect.selectedIndex = 0;
     }
     
-    // When category changes, update recipe list and render
+    // Update recipes when category changes
     categorySelect.addEventListener('change', () => {
       populateRecipeSelect(categorySelect.value);
       render();
@@ -271,16 +264,14 @@
       .then(data => {
           recipes = data;
           
-          // Enable controls (they may be disabled initially)
-          recipeSelect.disabled = false;
-          recipeQty.disabled = false;
-          categorySelect.disabled = false;  // enable category select too
-          
-          // Populate recipes for the initially selected category
-          populateRecipeSelect(categorySelect.value);
-          
-          // Render the first recipe
-          render();
+        // Enable controls (they may be disabled initially)
+        recipeSelect.disabled = false;
+        recipeQty.disabled = false;
+        categorySelect.disabled = false;
+        
+        populateRecipeSelect(categorySelect.value);
+        
+        render();
       })
       .catch(err => {
         treeView.innerHTML = '<p style="color:red;">Error loading recipes data.</p>';
