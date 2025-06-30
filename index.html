@@ -150,6 +150,32 @@
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
 
+    function populateRecipeSelect(category = categorySelect.value) {
+  recipeSelect.innerHTML = '';
+
+      // Show all recipes if category is "All"
+      const filteredRecipes = Object.entries(recipes).filter(([name, recipe]) => {
+        return category === 'All' || recipe.category === category;
+      });
+    
+      filteredRecipes.sort(([aName], [bName]) => aName.localeCompare(bName));
+    
+      filteredRecipes.forEach(([name]) => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = toTitleCase(name);
+        recipeSelect.appendChild(option);
+      });
+    
+      recipeSelect.selectedIndex = 0;
+    }
+    
+    // When category changes, update recipe list and render
+    categorySelect.addEventListener('change', () => {
+      populateRecipeSelect(categorySelect.value);
+      render();
+    });
+
     // Dark mode toggle
     darkModeToggle.addEventListener('click', () => {
       body.classList.toggle('dark-mode');
@@ -243,17 +269,18 @@
         return response.json();
       })
       .then(data => {
-        recipes = data;
-      
-        // Enable controls (they may be disabled initially)
-        recipeSelect.disabled = false;
-        recipeQty.disabled = false;
-      
-        // Populate the recipes filtered by category
-        populateRecipeSelect();
-      
-        // Render the first recipe
-        render();
+          recipes = data;
+          
+          // Enable controls (they may be disabled initially)
+          recipeSelect.disabled = false;
+          recipeQty.disabled = false;
+          categorySelect.disabled = false;  // enable category select too
+          
+          // Populate recipes for the initially selected category
+          populateRecipeSelect(categorySelect.value);
+          
+          // Render the first recipe
+          render();
       })
       .catch(err => {
         treeView.innerHTML = '<p style="color:red;">Error loading recipes data.</p>';
