@@ -5,7 +5,17 @@
   <title>Recipe Tree Viewer</title>
   <style>
     body { font-family: sans-serif; padding: 2rem; }
-    select, input[type=number] { font-size: 1rem; margin-left: 0.5rem; width: 6rem; }
+    select {
+      font-size: 1rem;
+      margin-left: 0.5rem;
+      min-width: 12rem;
+      width: auto;
+    }
+    input[type=number] {
+      font-size: 1rem;
+      margin-left: 0.5rem;
+      width: 4rem;
+    }
     ul { margin-left: 1.5rem; }
     .tree, .summary { margin-top: 2rem; }
   </style>
@@ -30,11 +40,12 @@
   </div>
 
   <script>
-    // Helper function: converts strings like "refined cloth" to "Refined Cloth"
+    // More robust Title Case function
     function toTitleCase(str) {
-      return str.replace(/\w\S*/g, (txt) =>
-        txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-      );
+      return str
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
     }
 
     const recipes = {
