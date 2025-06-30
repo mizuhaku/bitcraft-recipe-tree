@@ -1,23 +1,27 @@
 {
   "cloth research": {
+    "category": "Final",
     "components": {
       "refined cloth": 1,
       "study journal": 1
     }
   },
   "refined cloth": {
+    "category": "Processed",
     "components": {
       "textile": 1,
       "cloth": 5
     }
   },
   "textile": {
+    "category": "Processed",
     "components": {
       "animal hair": 1,
       "straw": 1
     }
   },
   "study journal": {
+    "category": "Processed",
     "components": {
       "parchment": 2,
       "ink": 2,
@@ -25,50 +29,91 @@
     }
   },
   "parchment": {
+    "category": "Processed",
     "components": {
       "bark": 2
     }
   },
   "bark": {
+    "category": "Raw",
     "components": {
       "tree trunk": 0.25
     }
   },
   "ink": {
+    "category": "Processed",
     "components": {
       "pigment": 1,
       "fish oil": 2
     }
   },
   "pigment": {
+    "category": "Raw",
     "components": {
       "flowers": 5
     }
   },
   "fish oil": {
+    "category": "Raw",
     "components": {
       "fish": 1
     }
   },
   "cloth": {
+    "category": "Processed",
     "components": {
       "cloth strip": 1,
       "wispweave filaments": 5
     }
   },
   "cloth strip": {
+    "category": "Processed",
     "components": {
       "thread": 1
     }
   },
   "thread": {
+    "category": "Raw",
     "components": {
       "fiber": 40
     }
   },
   "fiber": {
+    "category": "Raw",
     "components": {
       "plant root": 0.01
     }
+  },
+  "plant root": {
+    "category": "Raw",
+    "components": {}
+  },
+  "tree trunk": {
+    "category": "Raw",
+    "components": {}
+  },
+  "animal hair": {
+    "category": "Raw",
+    "components": {}
+  },
+  "straw": {
+    "category": "Raw",
+    "components": {}
+  },
+  "hieroglyph": {
+    "category": "Raw",
+    "components": {}
+  },
+  "flowers": {
+    "category": "Raw",
+    "components": {}
+  },
+  "fish": {
+    "category": "Raw",
+    "components": {}
+  },
+  "wispweave filaments": {
+    "category": "Raw",
+    "components": {}
   }
 }
