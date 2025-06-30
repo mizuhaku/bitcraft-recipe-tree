@@ -180,7 +180,7 @@
       const li = document.createElement('li');
       const recipe = recipes[name];
       const hasChildren = recipe && recipe.components && Object.keys(recipe.components).length > 0;
-
+    
       if (hasChildren) {
         li.classList.add('has-children');
         const toggle = document.createElement('span');
@@ -188,20 +188,35 @@
         toggle.textContent = '▼'; // Expanded by default
         li.appendChild(toggle);
       }
-
-      const textNode = document.createTextNode(` ${toTitleCase(name)} × ${qty}`);
-      li.appendChild(textNode);
-
+    
+      // Round tree trunk and plant root quantities up to whole numbers
+      if (name === 'tree trunk' || name === 'plant root') {
+        qty = Math.ceil(qty);
+      }
+    
+      li.appendChild(document.createTextNode(` ${toTitleCase(name)} × ${qty}`));
+    
       if (!hasChildren) {
         totals[name] = (totals[name] || 0) + qty;
         return li;
       }
-
+    
       const subUl = document.createElement('ul');
+    
       for (const [subName, subQty] of Object.entries(recipe.components)) {
-        const child = buildTree(subName, qty * subQty, totals);
+        let neededQty = qty * subQty;
+    
+        if (name === 'bark' && subName === 'tree trunk') {
+          neededQty = Math.ceil(neededQty / 4);
+        }
+        if (name === 'fiber' && subName === 'plant root') {
+          neededQty = Math.ceil(neededQty / 100);
+        }
+    
+        const child = buildTree(subName, neededQty, totals);
         subUl.appendChild(child);
       }
+    
       li.appendChild(subUl);
       return li;
     }
