@@ -97,7 +97,25 @@
     <h1>Recipe Material Viewer</h1>
     <button id="darkModeToggle" aria-pressed="false" aria-label="Toggle dark mode">Dark Mode</button>
   </div>
+  
+<div>
+  <label for="categorySelect">Select Category:</label>
+  <select id="categorySelect">
+    <option value="All">All</option>
+    <option value="Raw">Raw Resources</option>
+    <option value="Processed">Processed Resources</option>
+    <option value="Final">Final Products</option>
+  </select>
+</div>
+  
+<div>
+  <label for="recipeSelect">Select Recipe:</label>
+  <select id="recipeSelect" disabled></select>
+  <label for="recipeQty">Quantity:</label>
+  <input type="number" id="recipeQty" value="1" min="1" step="1" disabled />
+</div>
 
+  
   <div>
     <label for="recipeSelect">Select Recipe:</label>
     <select id="recipeSelect" disabled></select>
@@ -239,19 +257,15 @@
       })
       .then(data => {
         recipes = data;
+      
+        // Enable controls (they may be disabled initially)
         recipeSelect.disabled = false;
         recipeQty.disabled = false;
-
-        Object.keys(recipes)
-          .sort((a,b) => a.localeCompare(b))
-          .forEach(recipe => {
-            const option = document.createElement('option');
-            option.value = recipe;
-            option.textContent = toTitleCase(recipe);
-            recipeSelect.appendChild(option);
-          });
-
-        recipeSelect.selectedIndex = 0;
+      
+        // Populate the recipes filtered by category
+        populateRecipeSelect();
+      
+        // Render the first recipe
         render();
       })
       .catch(err => {
