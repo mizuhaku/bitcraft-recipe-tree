@@ -37,8 +37,9 @@
   "bark": {
     "category": "Raw",
     "components": {
-      "tree trunk": 0.25
-    }
+      "tree trunk": 1
+    },
+    "produces": 4
   },
   "ink": {
     "category": "Processed",
@@ -81,8 +82,9 @@
   "fiber": {
     "category": "Raw",
     "components": {
-      "plant root": 0.01
-    }
+      "plant root": 1
+    },
+    "produces": 100
   },
   "plant root": {
     "category": "Raw",
