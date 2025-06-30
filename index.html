@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Recipe Material Viewer with Dark Mode</title>
   <style>
-    /* (Keep all the previous CSS styles here unchanged) */
     body {
       font-family: Arial, sans-serif;
       padding: 2rem;
@@ -12,7 +11,32 @@
       color: #222;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
-    /* ... rest of CSS same as before ... */
+
+    #headerContainer {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    #headerContainer h1 {
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    button {
+      padding: 0.3rem 0.8rem;
+      cursor: pointer;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background-color: #eee;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    button:hover {
+      background-color: #ddd;
+    }
+
     select, input[type=number] {
       font-size: 1rem;
       margin-left: 0.5rem;
@@ -21,12 +45,69 @@
       border-radius: 4px;
       transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
-    /* rest of CSS omitted for brevity - just copy previous styles exactly */
+
+    .tree ul {
+      list-style-type: none;
+      padding-left: 1rem;
+      margin: 0.25rem 0;
+      border-left: 1px solid #ccc;
+    }
+
+    .tree li {
+      margin: 0.25rem 0;
+      line-height: 1.4;
+      cursor: default;
+      user-select: none;
+    }
+
+    .tree li.has-children > .toggle {
+      cursor: pointer;
+      margin-right: 0.25rem;
+      user-select: none;
+      font-weight: bold;
+    }
+
+    .tree ul.collapsed {
+      display: none;
+    }
+
+    .summary ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .summary li {
+      margin: 0.1rem 0;
+    }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background-color: #121212;
+      color: #ddd;
+    }
+    body.dark-mode button {
+      background-color: #333;
+      border-color: #555;
+      color: #ddd;
+    }
+    body.dark-mode button:hover {
+      background-color: #444;
+    }
+    body.dark-mode select, body.dark-mode input[type=number] {
+      background-color: #222;
+      border-color: #555;
+      color: #ddd;
+    }
+    body.dark-mode .tree ul {
+      border-color: #444;
+    }
   </style>
 </head>
 <body>
-  <h1>Recipe Material Viewer</h1>
-  <button id="darkModeToggle" aria-pressed="false" aria-label="Toggle dark mode">Dark Mode</button>
+  <div id="headerContainer">
+    <h1>Recipe Material Viewer</h1>
+    <button id="darkModeToggle" aria-pressed="false" aria-label="Toggle dark mode">Dark Mode</button>
+  </div>
 
   <div>
     <label for="recipeSelect">Select Recipe:</label>
